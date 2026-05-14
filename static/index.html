@@ -1,0 +1,1218 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <title>Smart POS AI Assistant Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #f3f5fa;
+            color: #0f172a;
+        }
+        
+        .wrap {
+            max-width: 1150px;
+            margin: 24px auto;
+            padding: 0 16px;
+        }
+        
+        .title {
+            margin: 0 0 4px;
+        }
+        
+        .hint {
+            margin: 0 0 14px;
+            color: #475569;
+        }
+        
+        .card {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 14px;
+        }
+        
+        .status {
+            border-radius: 10px;
+            padding: 10px 12px;
+            margin-bottom: 12px;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .status.warn {
+            background: #fff7ed;
+            border: 1px solid #fdba74;
+            color: #9a3412;
+            display: block;
+        }
+        
+        .status.ok {
+            background: #ecfeff;
+            border: 1px solid #67e8f9;
+            color: #155e75;
+            display: block;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin: 0 0 14px;
+        }
+
+        .tab-btn {
+            width: auto;
+            background: #e2e8f0;
+            color: #0f172a;
+            border: 1px solid #cbd5e1;
+            font-weight: 600;
+            padding: 8px 12px;
+        }
+
+        .tab-btn.active {
+            background: #2563eb;
+            color: #fff;
+            border-color: #1d4ed8;
+        }
+
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+        
+        h2,
+        h3 {
+            margin: 0 0 10px;
+        }
+        
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+        
+        .kpis {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        
+        .kpi {
+            border: 1px solid #dbeafe;
+            border-radius: 10px;
+            padding: 10px;
+            background: #f8fbff;
+        }
+
+        .kpi.clickable {
+            cursor: pointer;
+            transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
+        }
+
+        .kpi.clickable:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.12);
+            border-color: #93c5fd;
+        }
+
+        .kpi.clickable.active {
+            border-color: #2563eb;
+            box-shadow: inset 0 0 0 1px #2563eb;
+        }
+        
+        .kpi .label {
+            color: #334155;
+            font-size: 12px;
+        }
+        
+        .kpi .value {
+            font-size: 20px;
+            font-weight: 700;
+            margin-top: 4px;
+        }
+        
+        label {
+            display: block;
+            margin: 10px 0 6px;
+            font-weight: 600;
+        }
+        
+        input,
+        textarea,
+        button {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+        }
+        
+        textarea {
+            min-height: 90px;
+            resize: vertical;
+        }
+        
+        button {
+            cursor: pointer;
+            background: #2563eb;
+            color: #fff;
+            border: none;
+            font-weight: 700;
+        }
+        
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        .insights-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        /* Primary action: full-width on phones, neat on desktop */
+        #run-insights {
+            width: auto !important;
+            min-width: 160px;
+            min-height: 44px;
+            flex: 0 0 auto;
+        }
+
+        @media (max-width: 520px) {
+            #run-insights {
+                flex: 1 1 100%;
+                width: 100% !important;
+            }
+        }
+        
+        pre {
+            white-space: pre-wrap;
+            word-break: break-word;
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 12px;
+            border-radius: 8px;
+            max-height: 320px;
+            overflow: auto;
+        }
+        
+        .kv-wrap {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .kv-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            background: #fff;
+        }
+        
+        .kv-table th,
+        .kv-table td {
+            padding: 10px;
+            border-bottom: 1px solid #e2e8f0;
+            text-align: left;
+            vertical-align: top;
+        }
+        
+        .kv-table th {
+            width: 220px;
+            background: #f8fafc;
+            color: #334155;
+            font-weight: 700;
+        }
+        
+        .kv-table td {
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        
+        .json-toggle {
+            margin-bottom: 6px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: none;
+            border-radius: 6px;
+            padding: 4px 8px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .json-toggle:hover {
+            background: #1e293b;
+        }
+        
+        .json-block {
+            display: none;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 8px;
+        }
+        
+        .nested-table-wrap {
+            overflow-x: auto;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            background: #fff;
+        }
+        
+        .nested-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        
+        .nested-table th,
+        .nested-table td {
+            border-bottom: 1px solid #e2e8f0;
+            padding: 6px 8px;
+            text-align: left;
+            vertical-align: top;
+            white-space: pre-wrap;
+        }
+        
+        .nested-table th {
+            background: #f8fafc;
+            font-weight: 700;
+            color: #334155;
+        }
+        
+        .text-block {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: #fff;
+            padding: 10px 12px;
+            margin-bottom: 10px;
+        }
+        
+        .text-block h4 {
+            margin: 0;
+            color: #0f172a;
+        }
+        
+        .section-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .text-block ul {
+            margin: 0;
+            padding-left: 18px;
+        }
+        
+        .text-block li {
+            margin-bottom: 6px;
+            white-space: pre-wrap;
+        }
+        
+        .toggle-row {
+            margin-bottom: 8px;
+        }
+
+        .raw-section {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: #fff;
+            padding: 10px 12px;
+            margin-bottom: 10px;
+        }
+
+        .detail-title {
+            margin: 0 0 8px;
+            color: #0f172a;
+            font-size: 18px;
+        }
+
+        .detail-body {
+            color: #334155;
+        }
+
+        .detail-body p {
+            margin: 0 0 8px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        
+        th,
+        td {
+            border-bottom: 1px solid #e2e8f0;
+            text-align: left;
+            padding: 8px 6px;
+        }
+        
+        th {
+            color: #475569;
+            font-weight: 700;
+        }
+        
+        #trend-chart {
+            width: 100%;
+            height: 200px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            background: #fff;
+        }
+
+        #bar-chart,
+        #pie-chart {
+            width: 100%;
+            height: 240px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            background: #fff;
+        }
+
+        .chart-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 12px;
+        }
+        
+        @media (max-width: 900px) {
+            .grid-2,
+            .kpis,
+            .chart-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <h1 class="title">Smart POS AI Assistant</h1>
+        <p class="hint">AI-assisted product listing + business insights with mock POS datasets.</p>
+        <div id="llm-status" class="status"></div>
+
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="product-tab">AI Product Listing</button>
+            <button class="tab-btn" data-tab="insights-tab">Business Insights</button>
+        </div>
+
+        <div id="product-tab" class="tab-panel active">
+            <section class="card">
+                <h2>AI Product Listing</h2>
+                <label for="name">Product Name</label>
+                <input id="name" placeholder="Cold Brew Coffee 300ml" />
+                <label for="details">Product Details</label>
+                <textarea id="details" placeholder="unsweetened, shelf stable"></textarea>
+                <button id="run-product">Generate Listing</button>
+                <h3>Response</h3>
+                <div id="product-out" class="kv-wrap"></div>
+            </section>
+        </div>
+
+        <div id="insights-tab" class="tab-panel">
+            <section class="card">
+                <h2>Business Snapshot</h2>
+                <div class="kpis">
+                    <div class="kpi clickable" data-kpi="transactions">
+                        <div class="label">Transactions</div>
+                        <div class="value" id="kpi-txn">-</div>
+                    </div>
+                    <div class="kpi clickable" data-kpi="revenue">
+                        <div class="label">Total Revenue</div>
+                        <div class="value" id="kpi-rev">-</div>
+                    </div>
+                    <div class="kpi clickable" data-kpi="units">
+                        <div class="label">Units Sold</div>
+                        <div class="value" id="kpi-units">-</div>
+                    </div>
+                    <div class="kpi clickable" data-kpi="low_stock">
+                        <div class="label">Low Stock Items</div>
+                        <div class="value" id="kpi-low">-</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="card">
+                <h2 class="detail-title" id="snapshot-detail-title">Snapshot Detail</h2>
+                <div id="snapshot-detail-body" class="detail-body">Click a KPI card above to view details.</div>
+            </section>
+
+            <section class="card">
+                <h2>Business Insights</h2>
+                <p class="hint">Top sellers, trends, product performance, and AI recommendations.</p>
+                <div class="insights-toolbar">
+                    <button type="button" id="run-insights">Refresh Insights</button>
+                </div>
+                <h3>Trend (Revenue by Date)</h3>
+                <canvas id="trend-chart"></canvas>
+                <div class="chart-grid">
+                    <div>
+                        <h3>Top Product Revenue (Bar)</h3>
+                        <canvas id="bar-chart"></canvas>
+                    </div>
+                    <div>
+                        <h3>Revenue by Category (Pie)</h3>
+                        <canvas id="pie-chart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <section class="card">
+                <h2>Top-Selling Products</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Category</th>
+                            <th>Units</th>
+                            <th>Revenue</th>
+                        </tr>
+                    </thead>
+                    <tbody id="top-products-body">
+                        <tr>
+                            <td colspan="4">No data loaded yet.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <div class="grid-2">
+                <section class="card">
+                    <h2>Insights Text</h2>
+                    <div id="insights-out" class="kv-wrap"></div>
+                </section>
+                <section class="card">
+                    <h2>Raw JSON</h2>
+                    <div id="raw-out" class="kv-wrap"></div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const $ = (id) => document.getElementById(id);
+
+        /**
+         * API base for fetch():
+         * - Same tab as FastAPI: leave empty (same origin).
+         * - Opened as file://: default http://127.0.0.1:8000
+         * - UI on another port (Live Server, etc.): set localStorage POS_API_BASE = "http://127.0.0.1:8000"
+         *   or open /app?api=http://127.0.0.1:8000
+         */
+        const API_ROOT = (() => {
+            try {
+                const q = new URLSearchParams(window.location.search).get("api");
+                if (q) return q.replace(/\/$/, "");
+                const ls = localStorage.getItem("POS_API_BASE");
+                if (ls) return ls.replace(/\/$/, "");
+            } catch (e) { /* ignore */ }
+            return window.location.protocol === "file:" ? "http://127.0.0.1:8000" : "";
+        })();
+
+        let cachedInsightsPayload = null;
+
+        function apiUrl(path) {
+            return `${API_ROOT}${path}`;
+        }
+
+        /** Insights can wait on OpenRouter; avoid the browser hanging forever */
+        function fetchWithTimeout(url, options = {}, ms = 90000) {
+            const ctrl = new AbortController();
+            const id = setTimeout(() => ctrl.abort(), ms);
+            return fetch(url, { ...options, signal: ctrl.signal }).finally(() => clearTimeout(id));
+        }
+
+        /** Match canvas backing store to CSS size so graphs look sharp on retina and resize correctly */
+        function prepareCanvas(canvas, heightPx) {
+            const wrap = document.querySelector(".wrap");
+            const fallbackW = Math.max(280, Math.floor((wrap?.clientWidth || window.innerWidth) - 48));
+            let cssW = Math.floor(canvas.parentElement?.getBoundingClientRect().width || 0);
+            if (cssW < 48) cssW = fallbackW;
+            const cssH = heightPx;
+            const dpr = Math.min(window.devicePixelRatio || 1, 2);
+            canvas.width = Math.floor(cssW * dpr);
+            canvas.height = Math.floor(cssH * dpr);
+            canvas.style.width = "100%";
+            canvas.style.maxWidth = "100%";
+            canvas.style.height = cssH + "px";
+            canvas.style.display = "block";
+
+            const ctx = canvas.getContext("2d");
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            ctx.clearRect(0, 0, cssW, cssH);
+            return { ctx, w: cssW, h: cssH };
+        }
+
+        function drawAllInsightCharts(data) {
+            if (!data) return;
+            drawTrendChart(data.sales_trends || []);
+            drawBarChart(data.top_selling_products || []);
+            drawPieChart(data.product_performance || []);
+        }
+
+        function scheduleInsightChartRedraw(payload) {
+            cachedInsightsPayload = payload;
+            const run = () => drawAllInsightCharts(payload);
+            requestAnimationFrame(() => requestAnimationFrame(run));
+        }
+
+        function insightsTabVisible() {
+            return $("insights-tab")?.classList.contains("active");
+        }
+
+        function switchToInsightsTab() {
+            document.querySelectorAll(".tab-btn").forEach((b) => b.classList.remove("active"));
+            document.querySelectorAll(".tab-panel").forEach((p) => p.classList.remove("active"));
+            document.querySelector('.tab-btn[data-tab="insights-tab"]')?.classList.add("active");
+            $("insights-tab")?.classList.add("active");
+        }
+
+        function money(n) {
+            if (typeof n !== "number") return "-";
+            return "INR " + n.toLocaleString("en-IN", {
+                maximumFractionDigits: 2
+            });
+        }
+
+        function escapeHtml(value) {
+            return String(value)
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+                .replaceAll("'", "&#039;");
+        }
+
+        function renderKeyValueTable(targetId, rows) {
+            const out = $(targetId);
+            out.innerHTML = (
+                "<table class='kv-table'><tbody>" +
+                rows.map(([k, v]) => `<tr><th>${escapeHtml(k)}</th><td>${escapeHtml(v)}</td></tr>`).join("") +
+                "</tbody></table>"
+            );
+        }
+
+        function renderPrimitive(value) {
+            if (value === null || value === undefined) return "-";
+            if (typeof value === "boolean") return value ? "true" : "false";
+            return escapeHtml(String(value));
+        }
+
+        function renderObjectTable(obj) {
+            const rows = Object.entries(obj || {}).map(([k, v]) => (
+                `<tr><th>${escapeHtml(k)}</th><td>${renderPrimitive(v)}</td></tr>`
+            )).join("");
+            return `<div class="nested-table-wrap"><table class="nested-table"><tbody>${rows || "<tr><td>-</td></tr>"}</tbody></table></div>`;
+        }
+
+        function renderArrayTable(items) {
+            if (!Array.isArray(items) || items.length === 0) return "<div>-</div>";
+            const cols = Array.from(new Set(items.flatMap((item) => (item && typeof item === "object" && !Array.isArray(item)) ? Object.keys(item) : [])));
+            if (cols.length === 0) {
+                return `<div>${escapeHtml(items.map((x) => String(x)).join(", "))}</div>`;
+            }
+            const head = cols.map((c) => `<th>${escapeHtml(c)}</th>`).join("");
+            const body = items.map((item) => (
+                "<tr>" +
+                cols.map((c) => `<td>${renderPrimitive(item?.[c])}</td>`).join("") +
+                "</tr>"
+            )).join("");
+            return `<div class="nested-table-wrap"><table class="nested-table"><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>`;
+        }
+
+        function attachToggles(container) {
+            container.querySelectorAll(".json-toggle").forEach((btn) => {
+                btn.addEventListener("click", () => {
+                    const targetId = btn.getAttribute("data-target");
+                    const block = targetId ? container.querySelector(`#${targetId}`) : null;
+                    if (!block) return;
+                    const open = block.style.display === "block";
+                    block.style.display = open ? "none" : "block";
+                    btn.textContent = open ? "Show" : "Hide";
+                });
+            });
+        }
+
+        function setupTabs() {
+            const tabButtons = document.querySelectorAll(".tab-btn");
+            const tabPanels = document.querySelectorAll(".tab-panel");
+            tabButtons.forEach((btn) => {
+                btn.addEventListener("click", () => {
+                    const target = btn.getAttribute("data-tab");
+                    tabButtons.forEach((b) => b.classList.remove("active"));
+                    tabPanels.forEach((p) => p.classList.remove("active"));
+                    btn.classList.add("active");
+                    const panel = target ? document.getElementById(target) : null;
+                    if (panel) panel.classList.add("active");
+                    if (target === "insights-tab" && cachedInsightsPayload) {
+                        scheduleInsightChartRedraw(cachedInsightsPayload);
+                    }
+                });
+            });
+        }
+
+        function drawTrendChart(trends) {
+            const canvas = $("trend-chart");
+            const { ctx, w, h } = prepareCanvas(canvas, 200);
+
+            if (!Array.isArray(trends) || trends.length === 0) {
+                ctx.fillStyle = "#64748b";
+                ctx.fillText("No trend data.", 16, 20);
+                return;
+            }
+
+            const values = trends.map(x => x.revenue || 0);
+            const maxVal = Math.max(...values, 1);
+            const minVal = Math.min(...values, 0);
+            const pad = 30;
+            const stepX = (w - pad * 2) / Math.max(values.length - 1, 1);
+            const scaleY = (h - pad * 2) / Math.max(maxVal - minVal, 1);
+
+            ctx.strokeStyle = "#cbd5e1";
+            ctx.beginPath();
+            ctx.moveTo(pad, h - pad);
+            ctx.lineTo(w - pad, h - pad);
+            ctx.moveTo(pad, pad);
+            ctx.lineTo(pad, h - pad);
+            ctx.stroke();
+
+            ctx.strokeStyle = "#2563eb";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            values.forEach((val, i) => {
+                const x = pad + i * stepX;
+                const y = h - pad - (val - minVal) * scaleY;
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            });
+            ctx.stroke();
+
+            ctx.fillStyle = "#1e293b";
+            ctx.font = "11px Arial";
+            values.forEach((val, i) => {
+                const x = pad + i * stepX;
+                const y = h - pad - (val - minVal) * scaleY;
+                ctx.beginPath();
+                ctx.arc(x, y, 2.5, 0, Math.PI * 2);
+                ctx.fill();
+                if (i % 2 === 0) {
+                    ctx.fillText(trends[i].date.slice(5), x - 10, h - 12);
+                }
+            });
+        }
+
+        function drawBarChart(rows) {
+            const canvas = $("bar-chart");
+            const { ctx, w, h } = prepareCanvas(canvas, 240);
+
+            if (!Array.isArray(rows) || rows.length === 0) {
+                ctx.fillStyle = "#64748b";
+                ctx.fillText("No bar chart data.", 16, 20);
+                return;
+            }
+
+            const data = rows.slice(0, 6);
+            const values = data.map((x) => Number(x.revenue || 0));
+            const maxVal = Math.max(...values, 1);
+            const pad = 30;
+            const gap = 12;
+            const available = w - pad * 2;
+            const barW = Math.max((available - gap * (data.length - 1)) / data.length, 12);
+            const usableH = h - pad * 2 - 20;
+
+            ctx.strokeStyle = "#cbd5e1";
+            ctx.beginPath();
+            ctx.moveTo(pad, h - pad);
+            ctx.lineTo(w - pad, h - pad);
+            ctx.moveTo(pad, pad);
+            ctx.lineTo(pad, h - pad);
+            ctx.stroke();
+
+            data.forEach((r, i) => {
+                const x = pad + i * (barW + gap);
+                const barH = (Number(r.revenue || 0) / maxVal) * usableH;
+                const y = h - pad - barH;
+                ctx.fillStyle = "#2563eb";
+                ctx.fillRect(x, y, barW, barH);
+                ctx.fillStyle = "#1e293b";
+                ctx.font = "10px Arial";
+                const label = String(r.name || "").slice(0, 8);
+                ctx.fillText(label, x, h - 10);
+            });
+        }
+
+        function drawPieChart(rows) {
+            const canvas = $("pie-chart");
+            const { ctx, w, h } = prepareCanvas(canvas, 240);
+
+            if (!Array.isArray(rows) || rows.length === 0) {
+                ctx.fillStyle = "#64748b";
+                ctx.fillText("No pie chart data.", 16, 20);
+                return;
+            }
+
+            const byCategory = {};
+            rows.forEach((r) => {
+                const c = r.category || "Other";
+                byCategory[c] = (byCategory[c] || 0) + Number(r.revenue || 0);
+            });
+            const entries = Object.entries(byCategory);
+            const total = entries.reduce((s, [, v]) => s + v, 0) || 1;
+
+            const cy = h / 2;
+            const radius = Math.max(40, Math.min(Math.floor(h * 0.36), Math.floor(w * 0.22)));
+            const cx = Math.max(radius + 36, Math.min(Math.floor(w * 0.34), w - radius - 18));
+            const colors = ["#2563eb", "#14b8a6", "#f59e0b", "#ef4444", "#8b5cf6", "#06b6d4", "#84cc16"];
+            let start = -Math.PI / 2;
+
+            entries.forEach(([cat, val], i) => {
+                const angle = (val / total) * Math.PI * 2;
+                ctx.beginPath();
+                ctx.moveTo(cx, cy);
+                ctx.arc(cx, cy, radius, start, start + angle);
+                ctx.closePath();
+                ctx.fillStyle = colors[i % colors.length];
+                ctx.fill();
+                start += angle;
+            });
+
+            let legendX = Math.min(cx + radius + 16, w - 12);
+            const lineH = 18;
+            let legendY = 18;
+            if (legendX + 110 > w) {
+                legendX = 12;
+                legendY = Math.min(cy + radius + 18, h - entries.length * lineH);
+            }
+
+            ctx.font = "12px Arial";
+            entries.forEach(([cat], i) => {
+                const y = legendY + i * lineH;
+                ctx.fillStyle = colors[i % colors.length];
+                ctx.fillRect(legendX, y - 10, 10, 10);
+                ctx.fillStyle = "#1e293b";
+                const label = cat.length > 22 ? cat.slice(0, 21) + "…" : cat;
+                ctx.fillText(label, legendX + 16, y);
+            });
+        }
+
+        function renderTopProducts(rows) {
+            const body = $("top-products-body");
+            if (!Array.isArray(rows) || rows.length === 0) {
+                body.innerHTML = "<tr><td colspan='4'>No products found.</td></tr>";
+                return;
+            }
+            body.innerHTML = rows.slice(0, 8).map(r => (
+                "<tr>" +
+                `<td>${r.name || "-"}</td>` +
+                `<td>${r.category || "-"}</td>` +
+                `<td>${r.units_sold ?? "-"}</td>` +
+                `<td>${money(r.revenue)}</td>` +
+                "</tr>"
+            )).join("");
+        }
+
+        function setActiveKpi(key) {
+            document.querySelectorAll(".kpi.clickable").forEach((el) => {
+                el.classList.toggle("active", el.getAttribute("data-kpi") === key);
+            });
+        }
+
+        function renderSnapshotDetail(key, data) {
+            const titleEl = $("snapshot-detail-title");
+            const bodyEl = $("snapshot-detail-body");
+            if (!titleEl || !bodyEl) return;
+            if (!data || typeof data !== "object") {
+                titleEl.textContent = "Snapshot Detail";
+                bodyEl.textContent = "No insights data available yet.";
+                return;
+            }
+
+            const summary = data.summary || {};
+            const top = Array.isArray(data.top_selling_products) ? data.top_selling_products : [];
+            const trends = Array.isArray(data.sales_trends) ? data.sales_trends : [];
+            const performance = Array.isArray(data.product_performance) ? data.product_performance : [];
+            const lowStock = Array.isArray(data.inventory_alerts?.low_stock) ? data.inventory_alerts.low_stock : [];
+
+            if (key === "transactions") {
+                const busiest = trends.reduce((best, d) => {
+                    const curr = Number(d.transaction_count || 0);
+                    if (!best || curr > Number(best.transaction_count || 0)) return d;
+                    return best;
+                }, null);
+                titleEl.textContent = "Transactions Detail";
+                bodyEl.innerHTML = (
+                    `<p><strong>Total transactions:</strong> ${summary.transaction_count ?? 0}</p>` +
+                    `<p><strong>Days in range:</strong> ${summary.days_in_range ?? 0}</p>` +
+                    `<p><strong>Busiest day:</strong> ${busiest?.date || "-"} (${busiest?.transaction_count ?? 0} transactions)</p>` +
+                    `<p><strong>Average per day:</strong> ${summary.days_in_range ? (Number(summary.transaction_count || 0) / Number(summary.days_in_range)).toFixed(2) : "0.00"}</p>`
+                );
+                return;
+            }
+
+            if (key === "revenue") {
+                const best = top[0];
+                const highDay = trends.reduce((max, d) => (Number(d.revenue || 0) > Number(max?.revenue || 0) ? d : max), null);
+                titleEl.textContent = "Total Revenue Detail";
+                bodyEl.innerHTML = (
+                    `<p><strong>Total revenue:</strong> ${money(Number(summary.total_revenue || 0))}</p>` +
+                    `<p><strong>Top revenue product:</strong> ${best?.name || "-"} (${money(Number(best?.revenue || 0))})</p>` +
+                    `<p><strong>Highest revenue day:</strong> ${highDay?.date || "-"} (${money(Number(highDay?.revenue || 0))})</p>` +
+                    `<p><strong>Average order value:</strong> ${summary.transaction_count ? money(Number(summary.total_revenue || 0) / Number(summary.transaction_count)) : money(0)}</p>`
+                );
+                return;
+            }
+
+            if (key === "units") {
+                const leader = top[0];
+                titleEl.textContent = "Units Sold Detail";
+                bodyEl.innerHTML = (
+                    `<p><strong>Total units sold:</strong> ${summary.total_units_sold ?? 0}</p>` +
+                    `<p><strong>Catalog products:</strong> ${summary.distinct_products_in_catalog ?? 0}</p>` +
+                    `<p><strong>Top by units:</strong> ${leader?.name || "-"} (${leader?.units_sold ?? 0} units)</p>` +
+                    `<p><strong>Average units per transaction:</strong> ${summary.transaction_count ? (Number(summary.total_units_sold || 0) / Number(summary.transaction_count)).toFixed(2) : "0.00"}</p>`
+                );
+                return;
+            }
+
+            if (key === "low_stock") {
+                titleEl.textContent = "Low Stock Items Detail";
+                if (!lowStock.length) {
+                    bodyEl.innerHTML = "<p>No low-stock alerts currently.</p>";
+                    return;
+                }
+                bodyEl.innerHTML = (
+                    `<p><strong>Low stock count:</strong> ${lowStock.length}</p>` +
+                    renderArrayTable(lowStock.map((r) => ({
+                        product: r.name,
+                        category: r.category,
+                        qoh: r.quantity_on_hand,
+                        reorder_point: r.reorder_point,
+                        status: r.stock_status
+                    })))
+                );
+                return;
+            }
+
+            titleEl.textContent = "Snapshot Detail";
+            bodyEl.textContent = "Click a KPI card above to view details.";
+        }
+
+        function setupKpiInteractions() {
+            document.querySelectorAll(".kpi.clickable").forEach((el) => {
+                el.addEventListener("click", () => {
+                    const key = el.getAttribute("data-kpi");
+                    if (!key) return;
+                    setActiveKpi(key);
+                    renderSnapshotDetail(key, cachedInsightsPayload);
+                });
+            });
+        }
+
+        function renderProductListing(data) {
+            const out = $("product-out");
+            if (!data || typeof data !== "object") {
+                out.textContent = "No response data.";
+                return;
+            }
+
+            const rows = [
+                ["Description", data.description || "-"],
+                ["Category", data.category || "-"],
+                ["GST Rate (%)", data.gst_rate_percent ?? "-"],
+                ["HSN Code", data.hsn_code || "-"],
+                ["Keywords", Array.isArray(data.keywords) ? data.keywords.join(", ") || "-" : (data.keywords || "-")],
+                ["Disclaimer", data.disclaimer || "-"],
+            ];
+            if (data.llm_error) rows.push(["LLM Error", data.llm_error]);
+            renderKeyValueTable("product-out", rows);
+        }
+
+        function renderInsightsTable(data) {
+            const out = $("insights-out");
+            const blocks = [];
+
+            function cleanLines(text) {
+                return String(text || "")
+                    .split("\n")
+                    .map((line) => line.trim())
+                    .filter((line) => line.length > 0)
+                    .map((line) => line.replace(/^###\s*/i, "").replace(/^\-\s*/, ""))
+                    .filter((line) => {
+                        const normalized = line.replace(/\*\*/g, "").trim().toLowerCase();
+                        return normalized !== "insights" && normalized !== "recommendations";
+                    });
+            }
+
+            function renderNarrativeBlock(title, text) {
+                const lines = cleanLines(text);
+                if (lines.length === 0) return "";
+                const items = lines.map((line) => {
+                    const cleaned = line.replace(/\*\*(.*?)\*\*/g, "$1");
+                    return `<li>${escapeHtml(cleaned)}</li>`;
+                }).join("");
+                const id = `insight-block-${title.toLowerCase()}`;
+                return (
+                    `<div class="text-block">` +
+                    `<div class="section-head"><h4>${escapeHtml(title)}</h4><button class="json-toggle" data-target="${id}">Show</button></div>` +
+                    `<div id="${id}" class="json-block" style="display:none">` +
+                    `<ul>${items}</ul>` +
+                    `</div></div>`
+                );
+            }
+
+            blocks.push(renderNarrativeBlock("Insights", data.insights));
+            blocks.push(renderNarrativeBlock("Recommendations", data.recommendations));
+
+            const metaRows = [
+                ["LLM Used", data.llm_used ? "Yes" : "No"]
+            ];
+            if (data.llm_error) metaRows.push(["LLM Error", data.llm_error]);
+            blocks.push(
+                "<div class='text-block'>" +
+                "<h4>Model Status</h4>" +
+                "<table class='nested-table'><tbody>" +
+                metaRows.map(([k, v]) => `<tr><th>${escapeHtml(k)}</th><td>${escapeHtml(v)}</td></tr>`).join("") +
+                "</tbody></table>" +
+                "</div>"
+            );
+
+            out.innerHTML = blocks.filter(Boolean).join("");
+            attachToggles(out);
+        }
+
+        function renderRawJsonTable(data) {
+            if (!data || typeof data !== "object") {
+                $("raw-out").textContent = "No response data.";
+                return;
+            }
+            const out = $("raw-out");
+            const hiddenKeys = new Set(["insights", "recommendations", "llm_used", "llm_error"]);
+            const sectionsHtml = Object.entries(data)
+                .filter(([k]) => !hiddenKeys.has(k))
+                .map(([k, v], idx) => {
+                    const key = escapeHtml(k.replaceAll("_", " "));
+                    const title = key.charAt(0).toUpperCase() + key.slice(1);
+                    if (typeof v === "object" && v !== null) {
+                        const id = `raw-json-${idx}`;
+                        let rendered = "";
+                        if (k === "summary") rendered = renderObjectTable(v);
+                        else if (k === "top_selling_products") rendered = renderArrayTable(v);
+                        else if (k === "sales_trends") rendered = renderArrayTable(v);
+                        else if (k === "product_performance") rendered = renderArrayTable(v);
+                        else if (k === "inventory_alerts") {
+                            const lowCount = renderPrimitive(v.low_stock_count);
+                            const lowRows = renderArrayTable(v.low_stock || []);
+                            rendered = (
+                                "<div>" +
+                                `<div style="margin-bottom:8px;"><strong>low_stock_count:</strong> ${lowCount}</div>` +
+                                "<div><strong>low_stock</strong></div>" +
+                                lowRows +
+                                "</div>"
+                            );
+                        } else if (Array.isArray(v)) rendered = renderArrayTable(v);
+                        else rendered = renderObjectTable(v);
+                        return (
+                            `<div class="raw-section">` +
+                            `<div class="section-head"><h4>${title}</h4><button class="json-toggle" data-target="${id}">Show</button></div>` +
+                            `<div id="${id}" class="json-block">${rendered}</div>` +
+                            `</div>`
+                        );
+                    }
+                    return (
+                        `<div class="raw-section">` +
+                        `<div class="section-head"><h4>${title}</h4></div>` +
+                        `<div>${renderPrimitive(v)}</div>` +
+                        `</div>`
+                    );
+                })
+                .join("");
+
+            out.innerHTML = sectionsHtml || "<div class='raw-section'>No structured data.</div>";
+            attachToggles(out);
+        }
+
+        async function loadInsights() {
+            const insightsOut = $("insights-out");
+            if (insightsOut) insightsOut.textContent = "Loading...";
+            const btn = $("run-insights");
+            if (btn) {
+                btn.disabled = true;
+                btn.textContent = "Refreshing…";
+            }
+            const insightsUrl = apiUrl("/api/v1/insights");
+            const healthUrl = apiUrl("/health");
+            try {
+                let healthRes;
+                try {
+                    healthRes = await fetchWithTimeout(healthUrl, {}, 8000);
+                } catch (he) {
+                    if (he && he.name === "AbortError") {
+                        throw new Error(`No response from backend within 8s at ${healthUrl} (server stopped or wrong URL/port).`);
+                    }
+                    throw he;
+                }
+                if (!healthRes.ok) {
+                    throw new Error(`Health check HTTP ${healthRes.status} at ${healthUrl}`);
+                }
+
+                let res;
+                try {
+                    res = await fetchWithTimeout(insightsUrl);
+                } catch (ie) {
+                    if (ie && ie.name === "AbortError") {
+                        throw new Error(
+                            `Insights request timed out (90s) at ${insightsUrl}. ` +
+                                "OpenRouter may be slow; try clearing OPENROUTER_API_KEY for instant fallback."
+                        );
+                    }
+                    throw ie;
+                }
+                if (!res.ok) {
+                    throw new Error(`Insights HTTP ${res.status} at ${insightsUrl}`);
+                }
+                let data;
+                try {
+                    data = await res.json();
+                } catch (jsonErr) {
+                    throw new Error(`Insights response was not JSON (check ${insightsUrl}). ${String(jsonErr)}`);
+                }
+                renderRawJsonTable(data);
+
+                const summary = data.summary || {};
+                $("kpi-txn").textContent = summary.transaction_count ?? "-";
+                $("kpi-rev").textContent = money(summary.total_revenue);
+                $("kpi-units").textContent = summary.total_units_sold ?? "-";
+                $("kpi-low").textContent = (data.inventory_alerts || {}).low_stock_count ?? "-";
+
+                renderTopProducts(data.top_selling_products || []);
+
+                cachedInsightsPayload = data;
+                scheduleInsightChartRedraw(data);
+                renderSnapshotDetail("transactions", data);
+                setActiveKpi("transactions");
+
+                renderInsightsTable(data);
+
+                const status = $("llm-status");
+                if (data.llm_used) {
+                    status.className = "status ok";
+                    status.textContent = "OpenRouter AI is active.";
+                } else {
+                    status.className = "status warn";
+                    const reason = data.llm_error ? ` Reason: ${data.llm_error}` : "";
+                    status.textContent = "OpenRouter AI unavailable; using fallback recommendations." + reason;
+                }
+            } catch (err) {
+                const hint =
+                    "Ensure the backend is running from the project folder, then open http://127.0.0.1:8000/app " +
+                    "(hard refresh: Ctrl+F5). If the UI is not served by FastAPI, set localStorage POS_API_BASE to your API origin " +
+                    'or use ?api=http://127.0.0.1:8000 on the URL.';
+                let msg;
+                if (window.location.protocol === "file:") {
+                    msg =
+                        "Opened as a local file — API calls target " +
+                        healthUrl +
+                        ". Start: uvicorn main:app --host 127.0.0.1 --port 8000. " +
+                        hint +
+                        ` Details: ${String(err)}`;
+                } else {
+                    msg =
+                        `Could not fetch insights from backend. Please ensure the server is running. ` +
+                        `Tried health: ${healthUrl} and insights: ${insightsUrl}. ` +
+                        hint +
+                        ` Details: ${String(err)}`;
+                }
+                $("insights-out").textContent = msg;
+                $("raw-out").textContent = msg;
+                const status = $("llm-status");
+                status.className = "status warn";
+                status.textContent = msg;
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.textContent = "Refresh Insights";
+                }
+            }
+        }
+
+        $("run-product").addEventListener("click", async() => {
+            const name = $("name").value.trim();
+            const details = $("details").value.trim();
+            if (!name) {
+                $("product-out").textContent = "Please enter a product name.";
+                return;
+            }
+            $("product-out").textContent = "Loading...";
+            try {
+                const res = await fetchWithTimeout(apiUrl("/api/v1/products/ai-assist"), {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        name,
+                        details: details || null
+                    })
+                }, 90000);
+                if (!res.ok) {
+                    throw new Error(`HTTP ${res.status}`);
+                }
+                const data = await res.json();
+                renderProductListing(data);
+                if (data.llm_error) {
+                    const status = $("llm-status");
+                    status.className = "status warn";
+                    status.textContent = "Product listing used fallback mode. Reason: " + data.llm_error;
+                }
+            } catch (err) {
+                $("product-out").textContent = "Request failed: " + String(err);
+            }
+        });
+
+        $("run-insights").addEventListener("click", async() => {
+            switchToInsightsTab();
+            await loadInsights();
+        });
+
+        let resizeTimer;
+        window.addEventListener("resize", () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                if (!insightsTabVisible() || !cachedInsightsPayload) return;
+                scheduleInsightChartRedraw(cachedInsightsPayload);
+            }, 150);
+        });
+
+        setupTabs();
+        setupKpiInteractions();
+        if (window.location.protocol === "file:") {
+            const st = $("llm-status");
+            if (st) {
+                st.className = "status warn";
+                st.textContent =
+                    "Opened as a local file. Run the server, then use http://127.0.0.1:8000/app (recommended). " +
+                    "This file will call APIs at " +
+                    API_ROOT +
+                    " (override with ?api=http://HOST:PORT or localStorage POS_API_BASE).";
+            }
+        }
+        loadInsights();
+    </script>
+</body>
+
+</html>

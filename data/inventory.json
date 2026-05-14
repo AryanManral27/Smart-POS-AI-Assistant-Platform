@@ -1,0 +1,10 @@
+[
+  { "product_id": "PRD-001", "sku": "SKU-CHAI-250", "quantity_on_hand": 120, "reorder_point": 40 },
+  { "product_id": "PRD-002", "sku": "SKU-BRD-WW400", "quantity_on_hand": 35, "reorder_point": 25 },
+  { "product_id": "PRD-003", "sku": "SKU-RICE-ORG5", "quantity_on_hand": 18, "reorder_point": 10 },
+  { "product_id": "PRD-004", "sku": "SKU-SCN-WL", "quantity_on_hand": 8, "reorder_point": 5 },
+  { "product_id": "PRD-005", "sku": "SKU-TSHT-PL", "quantity_on_hand": 42, "reorder_point": 15 },
+  { "product_id": "PRD-006", "sku": "SKU-HNY-AY500", "quantity_on_hand": 55, "reorder_point": 20 },
+  { "product_id": "PRD-007", "sku": "SKU-LMP-LED", "quantity_on_hand": 22, "reorder_point": 8 },
+  { "product_id": "PRD-008", "sku": "SKU-PNR-FZ200", "quantity_on_hand": 6, "reorder_point": 15 }
+]

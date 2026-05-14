@@ -1,0 +1,74 @@
+[
+  {
+    "id": "PRD-001",
+    "name": "Masala Chai Latte 250ml",
+    "category": "Beverages",
+    "hsn_code": "21069099",
+    "gst_rate_percent": 5,
+    "unit_price": 45.0,
+    "tags": ["chai", "beverage", "ready-to-drink"]
+  },
+  {
+    "id": "PRD-002",
+    "name": "Whole Wheat Multigrain Bread 400g",
+    "category": "Bakery",
+    "hsn_code": "19059020",
+    "gst_rate_percent": 0,
+    "unit_price": 55.0,
+    "tags": ["bread", "bakery", "staple"]
+  },
+  {
+    "id": "PRD-003",
+    "name": "Organic Basmati Rice 5kg",
+    "category": "Groceries",
+    "hsn_code": "10063020",
+    "gst_rate_percent": 0,
+    "unit_price": 820.0,
+    "tags": ["rice", "organic", "bulk"]
+  },
+  {
+    "id": "PRD-004",
+    "name": "Wireless Barcode Scanner",
+    "category": "Electronics",
+    "hsn_code": "84716090",
+    "gst_rate_percent": 18,
+    "unit_price": 3499.0,
+    "tags": ["scanner", "pos", "hardware"]
+  },
+  {
+    "id": "PRD-005",
+    "name": "Men's Cotton Polo T-Shirt",
+    "category": "Apparel",
+    "hsn_code": "61051090",
+    "gst_rate_percent": 5,
+    "unit_price": 699.0,
+    "tags": ["apparel", "cotton", "casual"]
+  },
+  {
+    "id": "PRD-006",
+    "name": "Ayurvedic Honey 500g",
+    "category": "Wellness",
+    "hsn_code": "04090000",
+    "gst_rate_percent": 5,
+    "unit_price": 285.0,
+    "tags": ["honey", "wellness", "natural"]
+  },
+  {
+    "id": "PRD-007",
+    "name": "LED Desk Lamp USB-C",
+    "category": "Electronics",
+    "hsn_code": "94051190",
+    "gst_rate_percent": 18,
+    "unit_price": 1299.0,
+    "tags": ["lamp", "lighting", "usb-c"]
+  },
+  {
+    "id": "PRD-008",
+    "name": "Frozen Paneer Cubes 200g",
+    "category": "Dairy & Frozen",
+    "hsn_code": "04061000",
+    "gst_rate_percent": 5,
+    "unit_price": 95.0,
+    "tags": ["paneer", "frozen", "dairy"]
+  }
+]
